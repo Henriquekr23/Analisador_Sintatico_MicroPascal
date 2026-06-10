@@ -533,27 +533,6 @@ const char *nome_no_ast(TipoAST t) {
     }
 }
 
-void imprimir_ast(AST *raiz, int nivel) {
-    if (raiz == NULL) return;
-
-    for (int i = 0; i < nivel; i++) {
-        printf(" │   ");
-    }
-
-    if (raiz->tipo == AST_VARIAVEL) {
-        printf(" ├── %s (%s) [Tipo Semantico: %s]\n", nome_no_ast(raiz->tipo), raiz->valor, nome_tipo(raiz->tipo_dado));
-    } else if (raiz->tipo == AST_PROGRAMA || raiz->tipo == AST_DECLARACAO || raiz->tipo == AST_NUM_INT || raiz->tipo == AST_NUM_REAL) {
-        printf(" ├── %s (%s)\n", nome_no_ast(raiz->tipo), raiz->valor);
-    } else {
-        printf(" ├── %s\n", nome_no_ast(raiz->tipo));
-    }
-
-    imprimir_ast(raiz->esq, nivel + 1);
-    imprimir_ast(raiz->centro, nivel + 1);
-    imprimir_ast(raiz->dir, nivel + 1);
-    imprimir_ast(raiz->prox, nivel);
-}
-
 void gerar_dot_nos(AST *raiz, FILE *f) {
     if (raiz == NULL) return;
 
@@ -630,7 +609,6 @@ void exportar_ast_dot(AST *raiz, const char *nome_arquivo) {
     fclose(f);
     printf("Arquivo DOT gerado em '%s'\n", nome_arquivo);
 }
-
 
 // ============================================================================
 // ANALISADOR SINTÁTICO COM GERAÇÃO DE AST
@@ -1206,11 +1184,6 @@ int main(int argc, char **argv) {
 
     imprimir_tabela_simbolos();
 
-    // Imprimir AST
-    printf("\n=== ARVORE SINTATICA ABSTRATA (AST) ===\n");
-    imprimir_ast(raiz_ast, 0);
-    printf("=======================================\n");
-
     // Exportar e gerar imagem com Graphviz
     exportar_ast_dot(raiz_ast, "ast.dot");
     #ifdef __APPLE__
@@ -1220,7 +1193,6 @@ int main(int argc, char **argv) {
     #else
         system("dot -Tpng ast.dot -o ast.png 2>/dev/null");
     #endif
-
 
     printf("\n=== RESULTADO DA ANALISE ===\n");
     printf("Compilacao terminada com SUCESSO! Programa sintatica e semanticamente correto.\n");

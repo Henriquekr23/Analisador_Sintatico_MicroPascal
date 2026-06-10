@@ -13,7 +13,7 @@ O analisador realiza a leitura de arquivos de código-fonte Pascal, processa os 
    - Constrói uma árvore sintática abstrata completa do fluxo do programa.
    - Gera um arquivo `ast.dot` contendo a especificação do dígrafo (Graphviz).
    - Se o comando `dot` estiver instalado no seu Mac, compila automaticamente a especificação em um diagrama gráfico de alta resolução chamado `ast.png`.
-3. **Geração e Impressão de AST (Console)**: Imprime a AST de forma textual hierárquica no terminal.
+3. **Geração da AST Exclusiva em Arquivos**: A árvore sintática abstrata (AST) é exportada unicamente para os arquivos `ast.dot` e `ast.png` (usando Graphviz), mantendo o terminal limpo.
 4. **Trace de Regras de Produção**: Exibe no terminal a sequência de derivações/regras de produção utilizadas. Pode ser silenciado via parâmetro.
 5. **Suporte a Sinais Unários**: Análise correta de expressões matemáticas com sinal de mais ou menos inicial (ex: `x := -5;`).
 6. **Suporte a Underscore (`_`)**: Identificadores válidos podem conter caracteres `_` (ex: `valor_total`).
