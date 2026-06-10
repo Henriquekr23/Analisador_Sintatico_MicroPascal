@@ -397,9 +397,9 @@ void erro_lexico() {
 
 void erro_sintatico() {
     if (tok.tipo == TOKEN_FIM) {
-        printf("%d:fim de arquivo nao esperado\n", tok.linha);
+        printf("%d:fim de arquivo nao esperado.\n", tok.linha);
     } else {
-        printf("%d:token nao esperado [%s]\n", tok.linha, tok.lexema);
+        printf("%d:token nao esperado [%s].\n", tok.linha, tok.lexema);
     }
     liberar_tabela();
     if (tok.lexema) free(tok.lexema);
@@ -533,6 +533,27 @@ const char *nome_no_ast(TipoAST t) {
     }
 }
 
+void imprimir_ast(AST *raiz, int nivel) {
+    if (raiz == NULL) return;
+
+    for (int i = 0; i < nivel; i++) {
+        printf("  ");
+    }
+
+    if (raiz->tipo == AST_VARIAVEL) {
+        printf("%s (%s) [Tipo Semantico: %s]\n", nome_no_ast(raiz->tipo), raiz->valor, nome_tipo(raiz->tipo_dado));
+    } else if (raiz->tipo == AST_PROGRAMA || raiz->tipo == AST_DECLARACAO || raiz->tipo == AST_NUM_INT || raiz->tipo == AST_NUM_REAL) {
+        printf("%s (%s)\n", nome_no_ast(raiz->tipo), raiz->valor);
+    } else {
+        printf("%s\n", nome_no_ast(raiz->tipo));
+    }
+
+    imprimir_ast(raiz->esq, nivel + 1);
+    imprimir_ast(raiz->centro, nivel + 1);
+    imprimir_ast(raiz->dir, nivel + 1);
+    imprimir_ast(raiz->prox, nivel);
+}
+
 void gerar_dot_nos(AST *raiz, FILE *f) {
     if (raiz == NULL) return;
 
@@ -609,6 +630,7 @@ void exportar_ast_dot(AST *raiz, const char *nome_arquivo) {
     fclose(f);
     printf("Arquivo DOT gerado em '%s'\n", nome_arquivo);
 }
+
 
 // ============================================================================
 // ANALISADOR SINTÁTICO COM GERAÇÃO DE AST
@@ -1157,12 +1179,8 @@ void imprimir_tabela_simbolos() {
 int main(int argc, char **argv) {
     const char *nome_arquivo = "program.pas";
 
-    for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--silent") == 0 || strcmp(argv[i], "-s") == 0) {
-            imprimir_regras = false;
-        } else {
-            nome_arquivo = argv[i];
-        }
+    if (argc > 1) {
+        nome_arquivo = argv[1];
     }
 
     char *conteudo = ler_arquivo(nome_arquivo);
@@ -1193,6 +1211,7 @@ int main(int argc, char **argv) {
     #else
         system("dot -Tpng ast.dot -o ast.png 2>/dev/null");
     #endif
+
 
     printf("\n=== RESULTADO DA ANALISE ===\n");
     printf("Compilacao terminada com SUCESSO! Programa sintatica e semanticamente correto.\n");
